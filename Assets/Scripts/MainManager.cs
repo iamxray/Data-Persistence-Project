@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,17 +12,29 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text hightScoreText;
+
     public GameObject GameOverText;
     
     private bool m_Started = false;
+
     private int m_Points;
-    
+    private int hightScore;
+    private string enterName;
+    private string highScoreName;
+
     private bool m_GameOver = false;
 
     
     // Start is called before the first frame update
     void Start()
     {
+        hightScore = ScoreManager.Instance.highScore;
+        enterName = ScoreManager.Instance.enterName;
+        highScoreName = ScoreManager.Instance.highScoreName;
+        hightScoreText.text = $"Best Score :" + highScoreName + " : " + hightScore;
+
+
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -64,9 +77,32 @@ public class MainManager : MonoBehaviour
 
     void AddPoint(int point)
     {
+
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
+        CheckHighScore(m_Points);
+
+
     }
+
+    void CheckHighScore(int Points)
+    {
+        if (Points > hightScore)
+        {
+            hightScore = Points;
+            
+            ScoreManager.Instance.highScore = hightScore;
+            ScoreManager.Instance.highScoreName = enterName;
+
+            ScoreManager.Instance.SaveHighScore();
+            hightScoreText.text = $"Best Score :" + highScoreName + " : " + hightScore;
+        }
+
+        
+
+
+    }
+    
 
     public void GameOver()
     {
